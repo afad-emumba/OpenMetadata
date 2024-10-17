@@ -27,8 +27,8 @@ from metadata.ingestion.source.database.unitycatalog.models import (
 from metadata.utils.logger import ingestion_logger
 
 logger = ingestion_logger()
-TABLE_LINEAGE_PATH = "/lineage-tracking/table-lineage/get"
-COLUMN_LINEAGE_PATH = "/lineage-tracking/column-lineage/get"
+TABLE_LINEAGE_PATH = "/lineage-tracking/table-lineage"
+COLUMN_LINEAGE_PATH = "/lineage-tracking/column-lineage"
 TABLES_PATH = "/unity-catalog/tables"
 
 
