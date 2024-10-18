@@ -26,6 +26,7 @@ from metadata.generated.schema.type.entityLineage import (
     ColumnLineage,
     EntitiesEdge,
     LineageDetails,
+    jobAndNotebooks
 )
 from metadata.generated.schema.type.entityReference import EntityReference
 from metadata.ingestion.api.models import Either
@@ -85,7 +86,7 @@ class UnitycatalogLineageSource(Source):
         return cls(config, metadata)
 
     def _get_lineage_details(
-        self, from_table: Table, to_table: Table, databricks_table_fqn: str,notebook_name: str=None, job_name: str = None
+        self, from_table: Table, to_table: Table, databricks_table_fqn: str,jobs_and_notebooks:jobAndNotebooks=None
     ) -> Optional[LineageDetails]:
         col_lineage = []
         for column in to_table.columns:
@@ -106,7 +107,7 @@ class UnitycatalogLineageSource(Source):
                     )
                 )
         if col_lineage:
-            return LineageDetails(columnsLineage=col_lineage)
+            return LineageDetails(columnsLineage=col_lineage,jobAndNotebooks=jobs_and_notebooks)
         return None
 
     def _iter(self, *_, **__) -> Iterable[Either[AddLineageRequest]]:
@@ -139,6 +140,7 @@ class UnitycatalogLineageSource(Source):
                     notebook_ids = [notebook.notebook_id for notebook in upstream_table.notebookInfos]
 
                     edge_detail_info = self.client.get_jobs_names_and_notebooks_names(job_ids, notebook_ids)
+                    jobs_and_notebooks = jobAndNotebooks(jobs=edge_detail_info.get("jobs",[]),notebooks=edge_detail_info.get("notebooks",[]))
 
                     from_entity = self.metadata.get_by_name(
                         entity=Table, fqn=from_entity_fqn
@@ -148,6 +150,7 @@ class UnitycatalogLineageSource(Source):
                             from_table=from_entity,
                             to_table=table,
                             databricks_table_fqn=databricks_table_fqn,
+                            jobs_and_notebooks=jobs_and_notebooks
                         )
                         yield Either(
                             left=None,

@@ -37,7 +37,7 @@
             "type":"string"
           }
         },
-        "notebook": {
+        "notebooks": {
           "description": "Notebook that is part of the lineage.",
           "type":"array",
           "items": {
