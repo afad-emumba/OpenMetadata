@@ -18,6 +18,7 @@ from typing import List, Optional, Union
 from pydantic import BaseModel
 
 
+
 class DatabricksTable(BaseModel):
     name: Optional[str] = None
     catalog_name: Optional[str] = None
@@ -30,10 +31,23 @@ class DatabricksColumn(BaseModel):
     schema_name: Optional[str] = None
     table_name: Optional[str] = None
 
+class DatabricksJob(BaseModel):
+    workspace_id: Optional[int] = None
+    job_id: Optional[int] = None
+
+class DatabricksNotebooks(BaseModel):
+    workspace_id: Optional[int] = None
+    notebook_id: Optional[int] = None
+
+
+class DatabricksTableLineageStream(BaseModel):
+    tableInfo: Optional[DatabricksTable] = None
+    jobInfos: Optional[List[DatabricksJob]] = []
+    notebookInfos: Optional[List[DatabricksNotebooks]] = []
 
 class LineageTableStreams(BaseModel):
-    upstream_tables: Optional[List[DatabricksTable]] = []
-    downstream_tables: Optional[List[DatabricksTable]] = []
+    upstreams: Optional[List[DatabricksTableLineageStream]] = []
+    downstreams: Optional[List[DatabricksTableLineageStream]] = []
 
 
 class LineageColumnStreams(BaseModel):

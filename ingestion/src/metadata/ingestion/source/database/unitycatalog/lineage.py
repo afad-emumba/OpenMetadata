@@ -85,7 +85,7 @@ class UnitycatalogLineageSource(Source):
         return cls(config, metadata)
 
     def _get_lineage_details(
-        self, from_table: Table, to_table: Table, databricks_table_fqn: str
+        self, from_table: Table, to_table: Table, databricks_table_fqn: str,notebook_name: str=None, job_name: str = None
     ) -> Optional[LineageDetails]:
         col_lineage = []
         for column in to_table.columns:
@@ -125,15 +125,20 @@ class UnitycatalogLineageSource(Source):
                 table_streams: LineageTableStreams = self.client.get_table_lineage(
                     databricks_table_fqn
                 )
-                for upstream_table in table_streams.upstream_tables:
+                for upstream_table in table_streams.upstreams:
                     from_entity_fqn = fqn.build(
                         metadata=self.metadata,
                         entity_type=Table,
-                        database_name=upstream_table.catalog_name,
-                        schema_name=upstream_table.schema_name,
-                        table_name=upstream_table.name,
+                        database_name=upstream_table.tableInfo.catalog_name,
+                        schema_name=upstream_table.tableInfo.schema_name,
+                        table_name=upstream_table.tableInfo.name,
                         service_name=self.config.serviceName,
                     )
+
+                    job_ids = [job.job_id for job in upstream_table.jobInfos]
+                    notebook_ids = [notebook.notebook_id for notebook in upstream_table.notebookInfos]
+
+                    edge_detail_info = self.client.get_jobs_names_and_notebooks_names(job_ids, notebook_ids)
 
                     from_entity = self.metadata.get_by_name(
                         entity=Table, fqn=from_entity_fqn

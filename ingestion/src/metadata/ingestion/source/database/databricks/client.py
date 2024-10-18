@@ -54,6 +54,8 @@ class DatabricksClient:
         self.base_job_url = f"https://{base_url}{job_api_version}/jobs"
         self.jobs_list_url = f"{self.base_job_url}/list"
         self.jobs_run_list_url = f"{self.base_job_url}/runs/list"
+        self.job_url =f"{self.base_job_url}/get"
+        self.workspace_url = f"{self.base_url}/workspace/list"
         self.headers = {
             "Authorization": f"Bearer {auth_token}",
             "Content-Type": "application/json",

@@ -26,6 +26,26 @@
         }
       }
     },
+    "jobsAndNotebooks":{
+      "description": "Job and notebooks that are part of the lineage.",
+      "type":"object",
+      "properties": {
+        "jobs": {
+          "description": "Job that is part of the lineage.",
+          "type": "array",
+          "items": {
+            "type":"string"
+          }
+        },
+        "notebook": {
+          "description": "Notebook that is part of the lineage.",
+          "type":"array",
+          "items": {
+            "type":"string"
+          }
+        }
+      }
+    },
     "lineageDetails" : {
       "description" : "Lineage details including sqlQuery + pipeline + columnLineage.",
       "type" : "object",
@@ -54,6 +74,13 @@
           "type": "string",
           "enum": ["Manual", "ViewLineage", "QueryLineage", "PipelineLineage", "DashboardLineage", "DbtLineage", "SparkLineage", "OpenLineage", "ExternalTableLineage"],
           "default": "Manual"
+        },
+        "jobAndNotebooks": {
+          "description": "Job and notebooks that are part of the lineage.",
+          "type": "object",
+          "items": {
+            "$ref": "#/definitions/jobsAndNotebooks"
+          }
         }
       }
     },
